@@ -182,7 +182,7 @@ if (isset($_REQUEST['questionCount']) && isset($_REQUEST['timeLimit']) && isset(
             /* Ẩn menu bên trái */
             width: 250px;
             height: 100%;
-            background-color: #FFB5A7;
+            background-color: #a49de1;
             transition: left 0.3s ease;
             z-index: 1000;
             padding: 20px;
@@ -308,9 +308,9 @@ if (isset($_REQUEST['questionCount']) && isset($_REQUEST['timeLimit']) && isset(
     <div class="menu" id="leftMenu">
         <h3>Menu</h3>
         <ul>
-            <li>Trang chủ</li>  
-            <li><a href="index.php">Toán Finger Math</a></li>
-            <li><a href="randomImg.php">Trò chơi Đoán Hình</a></li>
+            <li>Trang chủ</li>
+            <li>Toán Finger Math</li>
+            <li>Trò chơi Đoán Hình</li>
             <li>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" id="setup">
                     Cài đặt ngẫu nhiên
@@ -319,60 +319,7 @@ if (isset($_REQUEST['questionCount']) && isset($_REQUEST['timeLimit']) && isset(
         </ul>
     </div>
 
-    <div class="content">
-        <div class="number-display" id="numberDisplay">0</div>
-    </div>
-
-    <div class="controls">
-        <div class="input-group">
-            <input type="number" id="answerInput" class="form-control" placeholder="Nhập đáp án" style="height: unset;">
-            <div class="input-group-append">
-                <button id="checkButton" class="btn btn-outline-secondary" style="width: auto;">Kiểm tra</button>
-            </div>
-        </div>
-        <button id="answerShow">Đáp án</button>
-        <button id="pausePlayButton" class="btn btn-primary">Bắt đầu</button>
-        <button id="nextButton" class="btn btn-secondary">Kết tiếp</button>
-    </div>
-    <!-- Modal for Check Answer -->
-    <div class="modal fade" id="checkAnswerModal" tabindex="-1" role="dialog" aria-labelledby="checkAnswerLabel" aria-hidden="true" data-backdrop="false">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="checkAnswerLabel">Kết quả của bạn</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p id="checkAnswerMessage"></p>
-                    <div id="sticker"></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- model for answer -->
-    <div class="modal fade" id="answerModal" tabindex="-1" role="dialog" aria-labelledby="answerLabel" aria-hidden="true" data-backdrop="false">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="answerLabel">Đáp án</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p id="answerMessage"></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- Audio -->
     <audio id="startgame" src="music/start.wav"></audio>
@@ -385,20 +332,7 @@ if (isset($_REQUEST['questionCount']) && isset($_REQUEST['timeLimit']) && isset(
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        var number = <?php echo json_encode($numberList); ?>;
-        var answer = <?php echo array_sum($numberList); ?>;
-        // alert(answer);
-
-        var interval;
-        var i = 0;
-
-        function readNumber(num) {
-            var prefix = num >= 0 ? "Cộng " : "Trừ ";
-            var msg = new SpeechSynthesisUtterance(prefix + Math.abs(num));
-            msg.lang = 'vi-VN'; // Set the language to Vietnamese
-            window.speechSynthesis.speak(msg);
-        }
-
+        
         function showSticker(isCorrect) {
             var sticker = document.getElementById('sticker');
             var sound = isCorrect ? document.getElementById('correctSound') : document.getElementById('incorrectSound');
@@ -412,65 +346,7 @@ if (isset($_REQUEST['questionCount']) && isset($_REQUEST['timeLimit']) && isset(
             sound.play();
         }
 
-        function checkAnswer(userAnswer) {
-            var checkAnswerModal = document.getElementById('checkAnswerModal');
-            var checkAnswerMessage = document.getElementById('checkAnswerMessage');
 
-            if (userAnswer === answer) {
-                checkAnswerMessage.innerHTML = "Đáp án đúng!";
-                showSticker(true);
-            } else {
-                checkAnswerMessage.innerHTML = "Đáp án sai!";
-                showSticker(false);
-
-            }
-            $('#checkAnswerModal').modal('show');
-
-            setTimeout(function() {
-                $('#checkAnswerModal').modal('hide');
-            }, 3000); // Close after 3 seconds
-        }
-
-        document.getElementById('pausePlayButton').addEventListener('click', function() {
-            var type = document.getElementById('pausePlayButton').innerHTML;
-            var audio = document.getElementById('startgame');
-
-            if (type == "Bắt đầu") {
-                audio.play();
-                document.getElementById('pausePlayButton').innerHTML = "Chơi lại";
-                var soundDuration = audio.duration * 1000; // Convert sound duration to milliseconds
-
-                setTimeout(function() {
-                    document.getElementById('numberDisplay').innerHTML = number[i];
-                    readNumber(number[i]);
-                    i++;
-                    interval = setInterval(function() {
-                        if (i < number.length) {
-                            if (number[i] > 0) {
-                                document.getElementById('numberDisplay').innerHTML = "+" + number[i];
-                            } else {
-                                document.getElementById('numberDisplay').innerHTML = number[i];
-                            }
-                            readNumber(number[i]);
-                            i++;
-                        } else {
-                            clearInterval(interval);
-                            var msg = new SpeechSynthesisUtterance("Kết thúc");
-                            msg.lang = 'vi-VN'; // Set the language to Vietnamese
-                            window.speechSynthesis.speak(msg);
-                        }
-                    }, <?php echo $timeLimit * 1000 ?>);
-                }, soundDuration);
-            } else if (type == "Chơi lại") {
-                document.getElementById('pausePlayButton').innerHTML = "Bắt đầu";
-                i = 0;
-            }
-        });
-
-        document.getElementById('checkButton').addEventListener('click', function() {
-            var userAnswer = parseInt(document.getElementById('answerInput').value);
-            checkAnswer(userAnswer);
-        });
         // Xử lý sự kiện nhấp chuột vào hamburger menu
         document.getElementById('hamburger').addEventListener('click', function() {
             const menu = document.getElementById('leftMenu');
@@ -505,16 +381,6 @@ if (isset($_REQUEST['questionCount']) && isset($_REQUEST['timeLimit']) && isset(
             }
         });
 
-        // Hiển thị đáp án khi nhấp vào nút
-        // Hiển thị đáp án khi nhấp vào nút
-        document.getElementById('answerShow').addEventListener('click', function() {
-            var answerModal = document.getElementById('answerModal');
-            var answerMessage = document.getElementById('answerMessage');
-
-            // Hiển thị mảng số và đáp án
-            answerMessage.innerHTML = "Mảng số: " + number.join(", ") + "<br>Đáp án: " + answer;
-            $('#answerModal').modal('show');
-        });
     </script>
 </body>
 
